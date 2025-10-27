@@ -1,24 +1,20 @@
-name: PHPStan Analysis
+name: PHPStan Analysis # Analyse statique du code
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
+on: [push, pull_request] # Lancement à chaque push ou pull request
 
 jobs:
   phpstan:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest # Système Linux pour l'exécution
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # Récupère le code source
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v2 # Installe PHP
         with:
-          php-version: '8.3'
+          php-version: '8.3' # Version 8.3 requise par les dépendances
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+        run: composer install # Télécharge les dépendances PHP
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --no-interaction
+        run: vendor/bin/phpstan analyse # Lance l’analyse statique du code

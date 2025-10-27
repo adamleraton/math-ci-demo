@@ -1,24 +1,20 @@
-name: PHP CS Fixer
+name: PHP CS Fixer # Vérifie le style de code PHP
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
+on: [push, pull_request] # Lancement automatique à chaque push
 
 jobs:
-  cs-fixer:
-    runs-on: ubuntu-latest
-
+  php-cs-fixer:
+    runs-on: ubuntu-latest # Environnement d'exécution
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # Clone le dépôt
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v2 # Installation de PHP
         with:
-          php-version: '8.3'
+          php-version: '8.3' # Version compatible avec le projet
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+        run: composer install # Installation des dépendances
 
-      - name: Run PHP CS Fixer (dry-run)
-        run: vendor/bin/php-cs-fixer fix --dry-run --verbose
+      - name: Run PHP CS Fixer
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff # Vérifie la conformité du code sans le modifier

@@ -1,24 +1,21 @@
-name: PHPUnit Tests
+name: PHPUnit Tests # Nom du workflow affiché dans l'onglet Actions
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request] # Déclenchement du workflow à chaque push ou pull request
 
 jobs:
   phpunit:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest # Environnement d'exécution (machine virtuelle Linux)
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 
+        uses: actions/checkout@v4 # Clone le dépôt GitHub sur le runner
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2 
+        uses: shivammathur/setup-php@v2 # Installe PHP sur le runner
         with:
-          php-version: '8.3'
+          php-version: '8.3' # Version de PHP à utiliser
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+        run: composer install --no-interaction --prefer-dist # Installe les dépendances Composer
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --testdox
+        run: vendor/bin/phpunit --testdox # Exécute les tests unitaires avec un affichage lisible
