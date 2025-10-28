@@ -97,8 +97,6 @@ jobs:
       # Étape 3 - Se connecte au serveur distant et déploie la dernière version
       - name: Déploiement sur le serveur distant
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@lesacteursduweb.fr "
-            cd ~/www_github &&
-            git pull origin main &&
-            composer install --no-dev --no-interaction --prefer-dist
+          ssh -o StrictHostKeyChecking=no adam@lesacteursduweb.fr "
+            echo "😂yes man"
           "
