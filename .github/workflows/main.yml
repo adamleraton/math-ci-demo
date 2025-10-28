@@ -98,5 +98,7 @@ jobs:
       - name: Déploiement sur le serveur distant
         run: |
           ssh -o StrictHostKeyChecking=no adam@lesacteursduweb.fr "
-            echo "😂yes man"
+            cd ~/www_github &&
+            git pull origin main &&
+            composer install --no-dev --no-interaction --prefer-dist
           "
