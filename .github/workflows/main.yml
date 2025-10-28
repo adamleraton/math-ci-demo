@@ -70,7 +70,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Déploiement sur le serveur distant
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@lesacteursduweb.fr "
+          ssh -o StrictHostKeyChecking=no adam@lesacteursduweb.fr "
             cd ~/www_github &&
             git pull origin main &&
             composer install --no-dev --no-interaction --prefer-dist
