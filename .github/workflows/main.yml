@@ -1,5 +1,7 @@
+# Nom global du pipeline complet
 name: CI + CD Pipeline
 
+# Déclenchement automatique à chaque push ou pull request sur la branche main
 on:
   push:
     branches:
@@ -7,67 +9,92 @@ on:
   pull_request:
 
 jobs:
+  # ----------- TESTS UNITAIRES AVEC PHPUNIT -----------
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
     steps:
+      # Étape 1 - Récupère le code depuis GitHub
       - name: Checkout du code
         uses: actions/checkout@v4
+
+      # Étape 2 - Installe PHP et Composer
       - name: Installation de PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           extensions: mbstring, intl, pdo, pdo_mysql
           tools: composer
+
+      # Étape 3 - Installe les dépendances du projet
       - name: Installation des dépendances
         run: composer install --no-progress --no-suggest --no-interaction
+
+      # Étape 4 - Lance les tests unitaires
       - name: Lancement des tests PHPUnit
         run: vendor/bin/phpunit --testdox
 
+  # ----------- ANALYSE STATIQUE AVEC PHPSTAN -----------
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
+
       - name: Installation de PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
+
       - name: Installation des dépendances
         run: composer install --no-progress --no-suggest --no-interaction
+
       - name: Analyse PHPStan
         run: vendor/bin/phpstan analyse --no-progress
 
+  # ----------- CONTRÔLE DE STYLE AVEC PHP-CS-FIXER -----------
   phpcsfixer:
     name: PHP CS Fixer
     runs-on: ubuntu-latest
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
+
       - name: Installation de PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
+
       - name: Installation des dépendances
         run: composer install --no-progress --no-suggest --no-interaction
+
       - name: Vérification du style de code
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
 
+  # ----------- DÉPLOIEMENT AUTOMATIQUE SSH -----------
   deploy:
     name: Déploiement sur lesacteursduweb.fr
     runs-on: ubuntu-latest
+
+    # Le déploiement ne s’exécute que si les 3 jobs CI réussissent
     needs: [phpunit, phpstan, phpcsfixer]
     if: ${{ success() }}
+
     steps:
+      # Étape 1 - Récupère à nouveau le code du dépôt
       - name: Checkout du code
         uses: actions/checkout@v4
+
+      # Étape 2 - Configure la clé SSH stockée dans les Secrets GitHub
       - name: Configuration SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Étape 3 - Se connecte au serveur distant et déploie la dernière version
       - name: Déploiement sur le serveur distant
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@lesacteursduweb.fr "
